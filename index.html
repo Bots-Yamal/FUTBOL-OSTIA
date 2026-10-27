@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <meta
+    name="description"
+    content="Resultados, partidos, estadísticas y competiciones de fútbol."
+  >
+
+  <meta name="theme-color" content="#090b10">
+
+  <title>Fútbol Live</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- ============================= -->
+  <!-- HEADER -->
+  <!-- ============================= -->
+
+  <header class="header">
+
+    <div class="brand">
+      <div class="brand-ball">⚽</div>
+
+      <div>
+        <h1>FÚTBOL LIVE</h1>
+        <p>Resultados y estadísticas</p>
+      </div>
+    </div>
+
+    <button
+      id="refreshButton"
+      class="icon-button"
+      aria-label="Actualizar partidos"
+      title="Actualizar"
+    >
+      ↻
+    </button>
+
+  </header>
+
+
+  <!-- ============================= -->
+  <!-- BUSCADOR -->
+  <!-- ============================= -->
+
+  <section class="search-section">
+
+    <div class="search-box">
+
+      <span class="search-icon">⌕</span>
+
+      <input
+        id="leagueSearch"
+        type="search"
+        placeholder="Buscar liga..."
+        autocomplete="off"
+      >
+
+      <button
+        id="clearSearch"
+        class="clear-search hidden"
+        aria-label="Borrar búsqueda"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div
+      id="searchResults"
+      class="search-results hidden"
+    ></div>
+
+  </section>
+
+
+  <!-- ============================= -->
+  <!-- FECHAS -->
+  <!-- ============================= -->
+
+  <section class="date-navigation">
+
+    <button id="previousDay" class="date-arrow">
+      ‹
+    </button>
+
+    <div class="date-info">
+      <span id="dateLabel">Hoy</span>
+      <strong id="currentDate"></strong>
+    </div>
+
+    <button id="nextDay" class="date-arrow">
+      ›
+    </button>
+
+  </section>
+
+
+  <!-- ============================= -->
+  <!-- FILTROS -->
+  <!-- ============================= -->
+
+  <nav class="filters">
+
+    <button
+      class="filter-button active"
+      data-filter="all"
+    >
+      Todos
+    </button>
+
+    <button
+      class="filter-button"
+      data-filter="live"
+    >
+      <span class="live-dot"></span>
+      En vivo
+    </button>
+
+    <button
+      class="filter-button"
+      data-filter="upcoming"
+    >
+      Próximos
+    </button>
+
+    <button
+      class="filter-button"
+      data-filter="finished"
+    >
+      Finalizados
+    </button>
+
+  </nav>
+
+
+  <!-- ============================= -->
+  <!-- CONTENIDO PRINCIPAL -->
+  <!-- ============================= -->
+
+  <main>
+
+    <section
+      id="homeView"
+      class="view active-view"
+    >
+
+      <div class="section-title">
+
+        <div>
+          <span class="eyebrow">PARTIDOS</span>
+          <h2 id="matchesTitle">Partidos de hoy</h2>
+        </div>
+
+        <span id="matchCount" class="counter">
+          0
+        </span>
+
+      </div>
+
+
+      <!-- CARGANDO -->
+
+      <div id="loading" class="loading hidden">
+
+        <div class="spinner"></div>
+
+        <p>Cargando partidos...</p>
+
+      </div>
+
+
+      <!-- ERROR -->
+
+      <div id="errorBox" class="message-box error-box hidden">
+
+        <span>⚠️</span>
+
+        <div>
+          <strong>No pudimos cargar los partidos</strong>
+          <p id="errorMessage">
+            Intentá nuevamente.
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- SIN PARTIDOS -->
+
+      <div id="emptyBox" class="message-box hidden">
+
+        <span>⚽</span>
+
+        <div>
+          <strong>No hay partidos</strong>
+          <p>
+            No encontramos encuentros para este filtro.
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- PARTIDOS -->
+
+      <div id="matchesContainer"></div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- VISTA DE LIGA -->
+    <!-- ============================= -->
+
+    <section
+      id="leagueView"
+      class="view"
+    >
+
+      <button
+        id="backFromLeague"
+        class="back-button"
+      >
+        ← Volver
+      </button>
+
+
+      <div class="league-hero">
+
+        <img
+          id="leagueLogo"
+          class="league-logo-large"
+          alt=""
+        >
+
+        <div>
+
+          <span id="leagueCountry" class="eyebrow"></span>
+
+          <h2 id="leagueName">
+            Competición
+          </h2>
+
+          <p id="leagueSeason"></p>
+
+        </div>
+
+      </div>
+
+
+      <div class="tabs">
+
+        <button
+          class="tab-button active"
+          data-league-tab="matches"
+        >
+          Partidos
+        </button>
+
+        <button
+          class="tab-button"
+          data-league-tab="standings"
+        >
+          Tabla
+        </button>
+
+        <button
+          class="tab-button"
+          data-league-tab="scorers"
+        >
+          Goleadores
+        </button>
+
+      </div>
+
+
+      <div id="leagueContent"></div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- CENTRO DEL PARTIDO -->
+    <!-- ============================= -->
+
+    <section
+      id="matchView"
+      class="view"
+    >
+
+      <button
+        id="backFromMatch"
+        class="back-button"
+      >
+        ← Volver
+      </button>
+
+
+      <div id="matchHero" class="match-hero"></div>
+
+
+      <div class="tabs match-tabs">
+
+        <button
+          class="match-tab active"
+          data-match-tab="summary"
+        >
+          Resumen
+        </button>
+
+        <button
+          class="match-tab"
+          data-match-tab="stats"
+        >
+          Estadísticas
+        </button>
+
+        <button
+          class="match-tab"
+          data-match-tab="lineups"
+        >
+          Alineación
+        </button>
+
+        <button
+          class="match-tab"
+          data-match-tab="events"
+        >
+          Eventos
+        </button>
+
+      </div>
+
+
+      <div id="matchContent"></div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- LIGAS -->
+    <!-- ============================= -->
+
+    <section
+      id="leaguesView"
+      class="view"
+    >
+
+      <div class="section-title">
+
+        <div>
+          <span class="eyebrow">COMPETICIONES</span>
+          <h2>Nuestras 30 ligas</h2>
+        </div>
+
+      </div>
+
+
+      <div
+        id="leaguesGrid"
+        class="leagues-grid"
+      ></div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- FAVORITOS -->
+    <!-- ============================= -->
+
+    <section
+      id="favoritesView"
+      class="view"
+    >
+
+      <div class="section-title">
+
+        <div>
+          <span class="eyebrow">GUARDADOS</span>
+          <h2>Favoritos</h2>
+        </div>
+
+      </div>
+
+      <div id="favoritesContainer"></div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ============================= -->
+  <!-- NAVEGACIÓN INFERIOR -->
+  <!-- ============================= -->
+
+  <nav class="bottom-nav">
+
+    <button
+      class="nav-button active"
+      data-view="homeView"
+    >
+      <span>⚽</span>
+      <small>Partidos</small>
+    </button>
+
+
+    <button
+      class="nav-button"
+      data-action="live"
+    >
+      <span class="nav-live">●</span>
+      <small>En vivo</small>
+    </button>
+
+
+    <button
+      class="nav-button"
+      data-view="leaguesView"
+    >
+      <span>🏆</span>
+      <small>Ligas</small>
+    </button>
+
+
+    <button
+      class="nav-button"
+      data-view="favoritesView"
+    >
+      <span>★</span>
+      <small>Favoritos</small>
+    </button>
+
+  </nav>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
